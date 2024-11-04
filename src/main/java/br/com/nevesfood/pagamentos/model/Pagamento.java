@@ -57,8 +57,8 @@ public class Pagamento {
 	private Status status;
 	@NonNull
 	@Column(name = "pedido_id")
-	private Long pedidoIdLong;
+	private Long pedidoId;
 	@NonNull
 	@Column(name = "forma_de_pagamento_id")
-	private Long formaPagamentoIdLong;
+	private Long formaPagamentoId;
 }

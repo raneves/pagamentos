@@ -1,6 +1,8 @@
 package br.com.nevesfood.pagamentos.service;
 
 
+import java.util.Optional;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -8,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.nevesfood.pagamentos.dto.PagamentoDto;
+import br.com.nevesfood.pagamentos.http.PedidoClient;
 import br.com.nevesfood.pagamentos.model.Pagamento;
 import br.com.nevesfood.pagamentos.model.Status;
 import br.com.nevesfood.pagamentos.repository.PagamentoRepository;
@@ -23,6 +26,7 @@ import jakarta.persistence.EntityNotFoundException;
 public class PagamentoService {
 	@Autowired private PagamentoRepository repository;
 	@Autowired private ModelMapper modelMapper;
+	@Autowired private PedidoClient pedido;
  
 	
 	public Page<PagamentoDto> obterTodos(Pageable paginacao) {
@@ -46,14 +50,26 @@ public class PagamentoService {
         return modelMapper.map(pagamento, PagamentoDto.class);
     }
 	
-	  public PagamentoDto atualizarPagamento(Long id, PagamentoDto dto) {
-	        Pagamento pagamento = modelMapper.map(dto, Pagamento.class);
-	        pagamento.setId(id);
-	        pagamento = repository.save(pagamento);
-	        return modelMapper.map(pagamento, PagamentoDto.class);
-	    }
+  public PagamentoDto atualizarPagamento(Long id, PagamentoDto dto) {
+        Pagamento pagamento = modelMapper.map(dto, Pagamento.class);
+        pagamento.setId(id);
+        pagamento = repository.save(pagamento);
+        return modelMapper.map(pagamento, PagamentoDto.class);
+    }
+  
+  public void excluirPagamento(Long id) {
+        repository.deleteById(id);
+    }
 	  
-	  public void excluirPagamento(Long id) {
-	        repository.deleteById(id);
-	    }
+  public void confirmarPagamento(Long id){
+        Optional<Pagamento> pagamento = repository.findById(id);
+
+        if (!pagamento.isPresent()) {
+            throw new EntityNotFoundException();
+        }
+
+        pagamento.get().setStatus(Status.CONFIRMADO);
+        repository.save(pagamento.get());
+        pedido.atualizaPagamento(pagamento.get().getPedidoId());
+    }
 }
