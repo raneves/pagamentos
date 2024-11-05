@@ -7,5 +7,6 @@ package br.com.nevesfood.pagamentos.model;
 public enum Status {
 	CRIADO,
 	CONFIRMADO,
+	CONFIRMADO_SEM_INTEGRACAO,
 	CANCELADO
 }
