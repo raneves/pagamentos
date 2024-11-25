@@ -1,4 +1,4 @@
-package br.com.nevesfood.pagamentos.http;
+package br.com.ranevesfood.pagamentos.http;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @FeignClient("pedidos-ms")
 public interface PedidoClient {
-	@RequestMapping(method = RequestMethod.PUT, value = "/pedidos/{id}/pago")
+    @RequestMapping(method = RequestMethod.PUT, value = "/pedidos/{id}/pago")
     void atualizaPagamento(@PathVariable Long id);
 }
